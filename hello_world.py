@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, render_template
 from os import environ
 
 app = Flask(__name__)
@@ -14,21 +14,19 @@ def say_hi():
 
 @app.route("/hello/<name>")
 def hello_person(name):
-    html = """
-        <h1>
-            Hello {}!
-        </h1>
-        <p>
-            Here's a picture of a kitten.  Awww...
-        </p>
-        <img src="http://placekitten.com/200/300">
-    """
-    return html.format(name.title())
+    return render_template('template.html', my_name=name)
 
 @app.route("/jedi/<firstname>/<lastname>")
 def hi_person(firstname, lastname):
     jediname = lastname[:3] + firstname[:2]
     return "Hello {}!".format(jediname.title())
 
+@app.template_filter()
+def title_format(word):
+    """Convert first letter to uppercase"""
+    formatted_word = word[0].upper()
+    new_word = formatted_word + word.split(word[0])[1]
+    return new_word
+
 if __name__ == "__main__":
-    app.run(port=8080)
+    app.run(debug=True, host="0.0.0.0", port=8888)
